@@ -86,3 +86,29 @@ loops in reverse order, 0 to n-1 and -1 to n-1, prev_ind goes till ind -1
 apply coordinate shift to prevind
 and ind=n-1 , so dp[ind+1]=dp[n]
 therefore the table needs to be of size n+1
+
+
+
+so:
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<int> prev(n+1, 0);
+        vector<int> front(n+1, 0);
+        for (int ind = n - 1; ind >= 0; ind--) {
+            
+            for (int prev_ind = ind - 1; prev_ind >= -1; prev_ind--) {
+
+                int notpick = front[prev_ind + 1];
+                int pick = 0;
+                if (prev_ind == -1 || nums[ind] > nums[prev_ind]) {
+                    pick = 1 + front[ind + 1];
+                }
+                prev[prev_ind + 1] = max(pick, notpick);
+            }
+            front=prev;
+        }
+        return prev[-1 + 1];
+    }
+};
