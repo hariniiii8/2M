@@ -112,3 +112,24 @@ public:
         return prev[-1 + 1];
     }
 };
+
+
+most optimal:
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        vector<int> dp(nums.size(), 1);
+        int maxi = 0;
+        for (int i = 0; i < nums.size(); i++) {
+            for (int prev_ind = 0; prev_ind < i; prev_ind++) {
+                if (nums[i] > nums[prev_ind]) {
+                    dp[i] = max(dp[i], 1 + dp[prev_ind]);
+                }
+            }
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            maxi = max(maxi, dp[i]);
+        }
+        return maxi;
+    }
+};
