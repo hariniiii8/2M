@@ -1,0 +1,88 @@
+Recursion:
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        return fn(0,-1,nums);
+
+    }
+    int fn(int ind,int prev_ind,vector<int> &nums)
+    {
+        if(ind==nums.size())
+        {
+            return 0;   
+        }
+        int notpick=fn(ind+1,prev_ind,nums);
+        int pick=0;
+        if(prev_ind==-1||nums[ind]>nums[prev_ind])   //write the first condition prev_ind==-1 before the other bcoz otherwise the array will try to access ind -1 and coz error
+        {
+           pick=1+fn(ind+1,ind,nums);
+        }
+        return max(pick,notpick);
+    }
+};
+
+
+
+memo://prev_ind goes from -1 to n-1 , but we cannot store -1 ind in array so do coordinate change from 0 to n which is size of n+1 , -1 stored at 0 , 0 at 1 etc
+
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<vector<int>> dp(n,vector<int> (n+1,-1));
+        return fn(0,-1,nums,dp);
+
+    }
+    int fn(int ind,int prev_ind,vector<int> &nums,vector<vector<int>> &dp)
+    {
+        
+        if(ind==nums.size())
+        {
+            return 0;
+        }
+        if(dp[ind][prev_ind+1]!=-1)
+        {
+            return dp[ind][prev_ind+1];
+        }
+        int notpick=fn(ind+1,prev_ind,nums,dp);
+        int pick=0;
+        if(prev_ind==-1||nums[ind]>nums[prev_ind])
+        {
+           pick=1+fn(ind+1,ind,nums,dp);
+        }
+        return dp[ind][prev_ind+1]=max(pick,notpick);
+    }
+};
+
+
+here: the base case shud be before the -1 check 
+if you first check if the value in dp[ind][prev_ind + 1] is not -1. If it is not, 
+you return its value. However, if ind == nums.size() is true, indicating that you've reached the end of the array, 
+you should return 0. But in this order, if dp[ind][prev_ind + 1] != -1 is true, it will return that value without checking if ind == nums.size().
+
+tab:
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n = nums.size();
+        vector<vector<int>> dp(n+1, vector<int>(n + 1, 0));
+        for (int ind = n - 1; ind >= 0; ind--) {
+            for (int prev_ind = ind - 1; prev_ind >= -1; prev_ind--) {
+
+                int notpick = dp[ind + 1][prev_ind + 1];
+                int pick = 0;
+                if (prev_ind == -1 || nums[ind] > nums[prev_ind]) {
+                    pick = 1 + dp[ind + 1][ind + 1];
+                }
+                dp[ind][prev_ind + 1] = max(pick, notpick);
+            }
+        }
+        return dp[0][-1 + 1];
+    }
+};
+
+points to note:
+loops in reverse order, 0 to n-1 and -1 to n-1, prev_ind goes till ind -1
+apply coordinate shift to prevind
+and ind=n-1 , so dp[ind+1]=dp[n]
+therefore the table needs to be of size n+1
